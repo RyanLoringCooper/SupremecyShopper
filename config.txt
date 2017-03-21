@@ -1,0 +1,15 @@
+url = http://www.supremenewyork.com/shop/shirts/w6s5yxfqj
+size = Large								# Make sure this value starts with a capitol letter, for items with no size, leave this blank. You could delete the line too
+name = First Last
+email = email@email.com
+tel = 1234567890
+address = 123 Super Road
+zip = 12345
+city = Dirt City 						
+state = ca								
+country = USA								
+type = visa									# payment card type, must be lowercase, and no spaces. Spaces are underscores
+number = 1234567890123456					# card number
+expMonth = 04								# card expiration month, must have preceding 0 if month is less than 10
+expYear = 2017								# card expiration year
+CVV = 123									# card security number
