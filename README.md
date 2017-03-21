@@ -6,5 +6,5 @@ The config file is used to store all the basic information needed to purchase fr
 ## Dependancy
 The two dependancies are selenium and the geckodriver. geckodriver.exe is provided and will only work for Windows machines. Install selenium with
 
-`pip install selenium`
+`pip install -U selenium`
 
