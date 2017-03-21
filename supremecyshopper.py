@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# Created by Ryan Cooper in 2017
 from selenium import webdriver
 from selenium.common.exceptions import *
 from selenium.webdriver.support.ui import Select
@@ -5,6 +7,7 @@ from selenium.webdriver.common.action_chains import *
 
 import sys, __future__, os, time
 
+# returns the config file as a tuple
 def getConfig():
 	url = ""
 	size = ""
@@ -65,26 +68,36 @@ def getConfig():
 	return (url, size, name, email, tel, address, zipCode, city, state, country, cardType, number, expMonth, expYear, CVV)
 
 if __name__ == '__main__':
+	# get the parameters from the config file
 	(url, size, name, email, tel, address, zipCode, city, state, country, cardType, number, expMonth, expYear, CVV) = getConfig()
 
+	# These other drivers would work if you have the installed prerequisites 
+	# PhantomJS is a browser that is invisible to the user while the bot works
 	#driver = webdriver.PhantomJS(service_log_path=os.path.devnull)
-	driver = webdriver.Firefox() # this will show what the program is doing through firefox
 	#driver = webdriver.Chrome(str(os.getcwd())+'/chromedriver') # same as the firefox thing, but for chrome
-	driver.set_window_size(800, 800)
+	driver = webdriver.Firefox() # this will show what the program is doing through firefox
+	driver.set_window_size(1000, 800)
+	# go to the requested url
 	driver.get(url)
-	addToCartButton = None
-	good = False
-	while not good:
+
+	# variable to store the cart button
+	inStock = False
+	while not inStock:
 		try:
+			# not all items have a size parameter, so for items without one size in config.txt must be unset (i. e. size= )
 			if size != "":
+				# select the desired size
 				select = Select(driver.find_element_by_name('size'))
 				select.select_by_visible_text(size)
-			addToCartButton = driver.find_element_by_name('commit').click() # the add to cart button
-			good = True
+			driver.find_element_by_name('commit').click() # the add to cart button
+			inStock = True
 		except NoSuchElementException as e:
+			# the item was sold out, so refresh the page
 			driver.get(url)
+	# sleep so the item is added to the cart
 	time.sleep(1)
-	driver.get('https://www.supremenewyork.com/checkout') # begin checkout
+	# begin checkout. From what I found, click on the checkout button does not work
+	driver.get('https://www.supremenewyork.com/checkout') 
 	# fill out pay form
 	try:
 		driver.find_element_by_id('order_billing_name').send_keys(name)
@@ -101,6 +114,7 @@ if __name__ == '__main__':
 		Select(driver.find_element_by_id('credit_card_year')).select_by_value(expYear)
 		driver.find_element_by_id('vval').send_keys(CVV)
 		driver.find_element_by_id('order_terms').click()
+		# make the purchase
 		driver.find_element_by_name('commit').click()
 	except NoSuchElementException as e:
-		print("The config file has invalid data in it for this purchase. Check the details there.")
+		print("The config file has invalid data in it for this purchase. Check the information in config.txt.")
